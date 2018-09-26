@@ -25,7 +25,7 @@ This app is for this type of users:
 ### Wireframes
 Main Page             |  Mylist Page
 :-------------------------:|:-------------------------:
-![Main Page](https://github.com/realnuno/youtube-journal-node-capstone/blob/master/readme-imgs/image1.jpeg)  |  ![Mylist Page](https://github.com/realnuno/youtube-journal-node-capstone/blob/master/readme-imgs/image2.jpeg)
+![Main Page](https://github.com/realnuno/travelers-fullstack-capstone/blob/master/readme-imgs/Image1.jpeg)  |  ![Mylist Page](https://github.com/realnuno/travelers-fullstack-capstone/blob/master/readme-imgs/Image2.jpeg)
 
 
 ## Working Prototype
