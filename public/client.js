@@ -25,6 +25,10 @@ $(function() {
                 $(".search-section").show();
                 $(".nav-section").show();
                 $(".login-section").hide();
+
+                $('html, body').animate({
+                      scrollTop: $('html, body').offset().top
+                  }, 200);
                 },
             type: 'POST',
             contentType: 'application/json',
@@ -86,6 +90,10 @@ $(function() {
                         $(".search-section").show();
                         $(".nav-section").show();
                         $(".signup-section").hide();
+
+                        $('html, body').animate({
+                              scrollTop: $('html, body').offset().top
+                          }, 200);
 
                         loginUserName = loginUser.email;
                         localStorage.setItem("token", data.authToken);
