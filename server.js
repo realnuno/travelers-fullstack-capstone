@@ -2,13 +2,13 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const {google} = require('googleapis');
 const bodyParser = require('body-parser');
 const morgan = require("morgan");
 const passport = require("passport");
 const config = require('./config');
-const { router: mylistRouter } = require("./mylist/mylist-router");
+const jwtAuth = passport.authenticate('jwt', {session: false});
 const { router: usersRouter } = require("./users/users-router");
+const { router: mylistRouter } = require("./mylist/mylist-router");
 const { localStrategy, jwtStrategy } = require("./auth/auth-strategies");
 const { router: authRouter } = require("./auth/auth-router");
 const { PORT, DATABASE_URL } = require("./config");
@@ -19,7 +19,6 @@ const app = express();
 app.use(morgan("common")); // Logging
 
 
-// CORS
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
@@ -30,13 +29,11 @@ app.use(function(req, res, next) {
     next();
 });
 
-
 app.use(express.static("public"));
 
 
 passport.use(localStrategy);
 passport.use(jwtStrategy);
-
 
 
 app.use("/api/users/", usersRouter);
@@ -47,42 +44,79 @@ app.use("/api/mylist/", mylistRouter);
 
 
 
-
-//----------------------  YouTube endpoint----------------//
-
-
-const youtube = google.youtube({
-    version: 'v3',
-    auth: "AIzaSyDxkmLJ32YwnuN4b7vuHfxpGrbZ99edrbE"
-});
+//============= external API ======================================
 
 
+const foursquare = require('node-foursquare-venues')(
+    'OYGYB2BAY34FJBJQFNDJXFJC3YYRSZJCS5HKOQZAUT1ZFKU3',
+    'QC3ZYQ2HCMCQOBLJV0RCL0B5ST0KBNIXHAJQ54ADI53XCDXA',
+    '20180606')
 
 
-app.get('/api/search', function (req, res) {
+app.get('/api/search', jwtAuth, (req, res) => {
 
 
-//    console.log(req.params);
+
     const input = req.query.q;
-    const page = req.query.pageToken;
 
-    youtube.search.list({
-        type: 'video',
-        maxResults: 5,
-        part: 'snippet',
-        pageToken : page,
-        q: input
+
+    foursquare.venues.explore({
+        near: input,
+        limit: 4
     }, function (err, data) {
         if (err) {
             console.error('Error: ' + err);
         }
         if (data) {
-//            console.log(data.data.items)
-            res.json(data.data)
+            console.log(data);
+            res.json(data)
         }
     });
 });
 
+app.get('/api/search-more', jwtAuth, (req, res) => {
+
+
+
+    const input = req.query.venueId;
+
+
+    foursquare.venues.venue(
+        input,
+        {
+        limit: 2
+        }, function (err, data) {
+        if (err) {
+            console.error('Error: ' + err);
+        }
+        if (data) {
+            console.log(data);
+            res.json(data)
+        }
+    });
+});
+
+app.get('/api/search-photos', jwtAuth, (req, res) => {
+
+
+
+    const input = req.query.venueId;
+
+
+    foursquare.venues.photos(
+        input,
+        {
+        limit: 20
+        }, function (err, data) {
+        if (err) {
+            console.error('Error: ' + err);
+        }
+        if (data) {
+            console.log(data);
+            res.json(data)
+        }
+    });
+});
 
 
 

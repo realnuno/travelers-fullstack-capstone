@@ -1,12 +1,8 @@
 "use strict";
 const express = require("express");
 const bodyParser = require("body-parser");
-const {
-    Mylist
-} = require("./mylist-models");
-const {
-    User
-} = require("../users/users-router");
+const {Mylist} = require("./mylist-models");
+const {User} = require("../users/users-router");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const router = express.Router();
@@ -20,25 +16,25 @@ const jwtAuth = passport.authenticate('jwt', {
 
 
 
-//router.get("/", jwtAuth, (req, res) => {
-//
-//    Mylist.find()
-//        .populate("user")
-//        .sort({
-//            creationDate: -1
-//        })
-//        .then(mylists => {
-//            res.json(
-//                mylists.map(mylist => mylist.serialize())
-//            );
-//        })
-//        .catch(err => {
-//            console.error(err);
-//            res.status(500).json({
-//                error: "something went wrong"
-//            });
-//        });
-//});
+router.get("/", jwtAuth, (req, res) => {
+
+    Mylist.find()
+        .populate("user")
+        .sort({
+            creationDate: -1
+        })
+        .then(mylists => {
+            res.json(
+                mylists.map(mylist => mylist.serialize())
+            );
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({
+                error: "something went wrong"
+            });
+        });
+});
 
 router.get("/test", (req, res) => {
 
@@ -97,13 +93,19 @@ router.get("/:id", (req, res) => {
         });
 });
 
-router.post("/add-video", jwtAuth, jsonParser, (req, res) => {
+router.post("/add-item", jwtAuth, jsonParser, (req, res) => {
 
     //change to actual fields//
     const requiredFields = [
-        "videoTitle",
-        "journal",
-        "video_url"
+            "venueName",
+            "description",
+            "phoneNumber",
+            "category",
+            "address",
+            "website",
+		    "photo1",
+			"photo2",
+            "memo"
     ];
     for (let i = 0; i < requiredFields.length; i++) {
         const field = requiredFields[i];
@@ -117,9 +119,15 @@ router.post("/add-video", jwtAuth, jsonParser, (req, res) => {
 
 
     Mylist.create({
-            videoTitle: req.body.videoTitle,
-            journal: req.body.journal,
-            video_url: req.body.video_url,
+            venueName: req.body.venueName,
+            description: req.body.description,
+            phoneNumber: req.body.phoneNumber,
+            category: req.body.category,
+            address: req.body.address,
+            website: req.body.website,
+            photo1: req.body.photo1,
+            photo2: req.body.photo2,
+            memo: req.body.memo,
             user: req.user.id
         })
         .then(
@@ -134,14 +142,20 @@ router.post("/add-video", jwtAuth, jsonParser, (req, res) => {
 });
 
 
-router.post("/add-video/test/", jsonParser, (req, res) => {
+router.post("/add-item/test/", jsonParser, (req, res) => {
 
     //change to actual fields//
     const requiredFields = [
-        "videoTitle",
-        "journal",
-        "video_url"
-    ];
+         "venueName",
+         "description",
+         "phoneNumber",
+         "category",
+         "address",
+         "website",
+		 "photo1",
+	   	 "photo2",
+         "memo"
+    	];
     for (let i = 0; i < requiredFields.length; i++) {
         const field = requiredFields[i];
         if (!(field in req.body)) {
@@ -152,9 +166,15 @@ router.post("/add-video/test/", jsonParser, (req, res) => {
     }
 
     const item = Mylist.create({
-            videoTitle: req.body.videoTitle,
-            journal: req.body.journal,
-            video_url: req.body.video_url
+            venueName: req.body.venueName,
+            description: req.body.description,
+            phoneNumber: req.body.phoneNumber,
+            category: req.body.category,
+            address: req.body.address,
+            website: req.body.website,
+            photo1: req.body.photo1,
+            photo2: req.body.photo2,
+            memo: req.body.memo
         })
         .then(
             mylist => res.status(201).json(mylist.serialize())
@@ -175,8 +195,7 @@ router.post("/add-video/test/", jsonParser, (req, res) => {
 
 
 
-router.put("/edit-journal/:id", jwtAuth, jsonParser, (req, res) => {
-
+router.put("/edit-memo/:id", jwtAuth, jsonParser, (req, res) => {
 
     if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
         res.status(400).json({
@@ -187,7 +206,7 @@ router.put("/edit-journal/:id", jwtAuth, jsonParser, (req, res) => {
     const updated = {};
     //change to actual fields//
     const updateableFields = [
-        "journal",
+        "memo",
         "id"
     ];
     updateableFields.forEach(field => {
@@ -212,7 +231,7 @@ router.put("/edit-journal/:id", jwtAuth, jsonParser, (req, res) => {
 
 
 
-router.put("/edit-journal/test/:id", jsonParser, (req, res) => {
+router.put("/edit-memo/test/:id", jsonParser, (req, res) => {
 
 
     if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
@@ -224,7 +243,7 @@ router.put("/edit-journal/test/:id", jsonParser, (req, res) => {
     const updated = {};
     //change to actual fields//
     const updateableFields = [
-        "journal",
+        "memo",
         "id"
     ];
     updateableFields.forEach(field => {

@@ -1,5 +1,4 @@
 "use strict";
-const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 
 mongoose.Promise = global.Promise;
@@ -19,21 +18,45 @@ function timeStamp(now) {
 }
 
 const mylistSchema = mongoose.Schema({
-    videoTitle: {
-        type: String,
-        required: true
-    },
-    journal: {
-        type: String,
-        required: true
-    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
-    video_url: {
+    venueName: {
         type: String,
-        default: ""
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    phoneNumber: {
+        type: String,
+        required: true
+    },
+    category: {
+        type: String,
+        required: true
+    },
+    address: {
+        type: String,
+        required: true
+    },
+    website: {
+        type: String,
+        required: true
+    },
+    photo1: {
+        type: String,
+        required: true
+    },
+    photo2: {
+        type: String,
+        required: true
+    },
+    memo: {
+        type: String,
+        required: true
     },
     creationDate: {
         type: Date,
@@ -44,10 +67,16 @@ const mylistSchema = mongoose.Schema({
 
 mylistSchema.methods.serialize = function () {
     return {
-        videoTitle: this.videoTitle || "",
-        journal: this.journal || "",
         id: this._id || "",
-        video_url: this.video_url,
+        venueName: this.venueName || "",
+        description: this.description || "",
+        phoneNumber: this.phoneNumber || "",
+        category: this.category || "",
+        address: this.address || "",
+        website: this.website || "",
+        photo1: this.photo1 || "",
+        photo2: this.photo2 || "",
+        memo: this.memo || "",
         creationDate: timeStamp(this.creationDate)
     };
 };

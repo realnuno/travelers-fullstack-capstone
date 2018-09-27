@@ -16,16 +16,16 @@ Log in Page View | Sign Up Page View
 
 
 ## User Cases
-This app is for this type of YouTube users:
-1. VIDEO SEARCH - For YouTube users, so that they can search and find videos that have been looking for.
-2. OWN PLAY LIST - Users can save favorite videos into your favorites list so they can watch them any time without commercials.
-3. WITH JOURNAL - Users can record ideas and ruminations about the video topics in your own personal journal.
+This app is for this type of users:
+1. NEW PLACE FOR TRAVEL - For travelers, so that they can search and get a lot of recommendations for new places to visit.
+2. OWN PLAY LIST - Users can save favorite results into your favorites list so they can check them any time without re-search.
+3. WITH NOTE - Users can record ideas and ruminations about the places in your own personal note.
 
 
 ### Wireframes
 Main Page             |  Mylist Page
 :-------------------------:|:-------------------------:
-![Main Page](https://github.com/realnuno/youtube-journal-node-capstone/blob/master/readme-imgs/main.jpg)  |  ![Mylist Page](https://github.com/realnuno/youtube-journal-node-capstone/blob/master/readme-imgs/mylist.jpg)
+![Main Page](https://github.com/realnuno/youtube-journal-node-capstone/blob/master/readme-imgs/image1.jpeg)  |  ![Mylist Page](https://github.com/realnuno/youtube-journal-node-capstone/blob/master/readme-imgs/image2.jpeg)
 
 ## Working Prototype
 You can access a working prototype of the app here: https://travelers-fullstack-capstone.herokuapp.com/

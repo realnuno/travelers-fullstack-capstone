@@ -1,41 +1,40 @@
 {
-    "name": "travelers-fullstack-capstone",
-    "version": "1.0.0",
-    "description": "You can search world wide venues and make your own list.",
-    "main": "server.js",
-    "dependencies": {
-        "bcryptjs": "^2.4.3",
-        "body-parser": "^1.15.2",
-        "dotenv": "^6.0.0",
-        "express": "^4.14.0",
-        "googleapis": "^32.0.0",
-        "jsonwebtoken": "^8.3.0",
-        "mongodb": "^2.2.9",
-        "mongoose": "^4.5.10",
-        "morgan": "^1.9.0",
-        "passport": "^0.3.2",
-        "passport-jwt": "^4.0.0",
-        "passport-local": "^1.0.0"
-    },
-    "devDependencies": {
-        "chai": "^3.5.0",
-        "chai-http": "^3.0.0",
-        "faker": "^3.1.0",
-        "moch": "0.0.1",
-        "mocha": "^3.2.0"
-    },
-    "scripts": {
-        "test": "mocha",
-        "start": "node server.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/realnuno/travelers-fullstack-capstone.git"
-    },
-    "author": "Ian Hwang",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/realnuno/travelers-fullstack-capstone/issues"
-    },
-    "homepage": "https://github.com/realnuno/travelers-fullstack-capstone#readme"
+  "name": "react_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "client.js",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "faker": "^3.1.0",
+    "moch": "0.0.1",
+    "mocha": "^3.2.0"
+  },
+  "scripts": {
+    "test": "mocha",
+    "start": "node server.js"
+  },
+  "author": "Ian Hwang",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.15.2",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "mongodb": "^2.2.9",
+    "mongoose": "^4.5.10",
+    "morgan": "^1.9.0",
+    "node-foursquare": "^0.4.6",
+    "node-foursquare-venues": "^1.1.0",
+    "passport": "^0.3.2",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "request": "^2.88.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/realnuno/travelers-fullstack-capstone.git"
+  },
+  "homepage": "https://github.com/realnuno/travelers-fullstack-capstone#readme"
 }

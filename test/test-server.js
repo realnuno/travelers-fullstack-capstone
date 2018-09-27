@@ -30,7 +30,7 @@ chai.use(chaiHttp);
 
 
 
-describe('youtube journal API resource', function () {
+describe('travelers API resource', function () {
 
     before(function () {
         return runServer(TEST_DATABASE_URL);
@@ -75,7 +75,7 @@ describe('youtube journal API resource', function () {
                 .then(function (res) {
                     res.body.forEach(function (post) {
                         expect(post).to.be.a("object");
-                        expect(post).to.have.all.keys('id', 'videoTitle', 'journal', 'video_url', 'creationDate');
+                        expect(post).to.have.all.keys('id', 'venueName', 'description','phoneNumber', 'category', 'address', 'website', 'photo1', 'photo2', 'memo', 'creationDate');
                     });
                     // just check one of the posts that its values match with those in db
                     // and we'll assume it's true for rest
@@ -86,7 +86,7 @@ describe('youtube journal API resource', function () {
     });
 
 
-        describe('POST endpoint', function () {
+       describe('POST endpoint', function () {
             // strategy: make a POST request with data,
             // then prove that the post we get back has
             // right keys, and that `id` is there (which means
@@ -94,26 +94,37 @@ describe('youtube journal API resource', function () {
             it('should add a new blog post', function () {
 
                 const newPost = {
-                    videoTitle: "Lorem ip some",
-                    journal: "foo foo foo foo",
-                    video_url: "Emma Goldman"
+					venueName: "Lorem ip some",
+					description: "Lorem ip some",
+					phoneNumber: "703-333-3333",
+					category: "foo foo foo foo",
+					address: "Emma Goldman",
+					website: "Lorem ip some",
+					photo1: "foo foo foo foo",
+					photo2: "Emma Goldman",
+					memo: "Lorem ip some"
                 };
 
                 const expectedKeys = ["id", "creationDate"].concat(Object.keys(newPost));
 
                 return chai
                     .request(app)
-                    .post('/api/mylist/add-video/test')
+                    .post('/api/mylist/add-item/test')
                     .send(newPost)
                     .then(function (res) {
-                        console.log("real");
                         expect(res).to.have.status(201);
                         expect(res).to.be.json;
                         expect(res.body).to.be.a("object");
                         expect(res.body).to.have.all.keys(expectedKeys);
-                        expect(res.body.videoTitle).to.equal(newPost.videoTitle);
-                        expect(res.body.journal).to.equal(newPost.journal);
-                        expect(res.body.video_url).to.equal(newPost.video_url);
+                        expect(res.body.venueName).to.equal(newPost.venueName);
+                        expect(res.body.description).to.equal(newPost.description);
+                        expect(res.body.phoneNumber).to.equal(newPost.phoneNumber);
+                        expect(res.body.category).to.equal(newPost.category);
+                        expect(res.body.address).to.equal(newPost.address);
+                        expect(res.body.website).to.equal(newPost.website);
+                        expect(res.body.photo1).to.equal(newPost.photo1);
+                        expect(res.body.photo2).to.equal(newPost.photo2);
+                        expect(res.body.memo).to.equal(newPost.memo);
                     })
             });
         });
@@ -134,12 +145,11 @@ describe('youtube journal API resource', function () {
                 .get('/api/mylist/test')
                 .then(function (res) {
                     const updatedPost = Object.assign(res.body[0], {
-                        videoTitle: 'cats cats cats',
-                        journal: 'dogs dogs dogs'
+                        memo: 'dogs dogs dogs'
                     });
                     return chai
                         .request(app)
-                        .put(`/api/mylist/edit-journal/test/${res.body[0].id}`)
+                        .put(`/api/mylist/edit-memo/test/${res.body[0].id}`)
                         .send(updatedPost)
                         .then(function (res) {
                             expect(res).to.have.status(200);

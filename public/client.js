@@ -1,236 +1,10 @@
-$(function () {
+$(function() {
 
 
+//==================================== Login ================================
 
 
-
-    //===================== YouTube API =========================
-
-
-
-
-    let query = "";
-
-    $(".search-form").submit(event => {
-
-        event.preventDefault();
-        event.stopPropagation();
-        //        $('html').animate({
-        //            scrollTop: 1250
-        //        }, 'fast');
-
-
-
-        $('.youtube-search-result').show();
-
-        $('html, body').animate({
-            scrollTop: $('.youtube-search-result').offset().top
-        }, 1000);
-
-        const queryTarget = $(event.currentTarget).find("#search-input");
-        query = queryTarget.val();
-
-        //        queryTarget.val("");
-
-        getResults(query, displayYoutubeData);
-
-    });
-
-
-
-    let pageTokenCurrent;
-
-    $(".tokenClass").click(function (event) {
-
-        $('html, body').animate({
-            scrollTop: $('.youtube-search-result').offset().top
-        }, 1000);
-
-        if ($(event.currentTarget).val() == "Next") {
-            pageTokenCurrent = nextPage;
-
-        } else {
-
-            pageTokenCurrent = prevPage;
-        };
-
-        $("#search-results p").empty();
-        getResults(query, displayYoutubeData);
-
-    });
-
-
-
-    function getResults(userInput, callback) {
-
-        const settings = {
-            url: "/api/search",
-            data: {
-                pageToken: pageTokenCurrent,
-                q: userInput
-            },
-            type: "GET",
-            dataType: "json",
-            success: callback
-        };
-
-        $.ajax(settings);
-
-    };
-
-
-    let videoInfo = [];
-
-
-    function displayYoutubeData(data) {
-
-        videoInfo = data.items;
-
-        nextPage = data.nextPageToken;
-        prevPage = data.prevPageToken;
-        console.log(videoInfo);
-
-        data.items.forEach(function (item, index) {
-
-
-            const videoUrl = `https://www.youtube.com/watch?v=${item.id.videoId}`;
-
-            $(`.video-result${index} img`).prop("src", item.snippet.thumbnails.high.url);
-            $(`.video-result${index} img`).prop("alt", item.snippet.title);
-            $(`.video-result${index} p`).text(item.snippet.title);
-            $(`.video-result${index} button`).attr("data-index", index);
-            $(`.video-result${index} a`).prop('hidden', false).attr("href", videoUrl);
-
-        });
-
-        $(".youtube-search-result").prop('hidden', false);
-        $(".about-this-app").prop('hidden', true);
-    };
-
-
-
-
-
-
-
-
-
-    //============== Pick video ============
-
-
-
-
-
-
-
-    let pickedVideo;
-
-
-
-    $("#search-results ul").on("click", ".addVideoButton", function (event) {
-
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        const authToken = localStorage.getItem("token");
-
-
-        pickedVideo = videoInfo[$(this).attr("data-index")];
-
-        localStorage.setItem('storedVideo', JSON.stringify(pickedVideo));
-
-
-
-        if (!authToken) {
-            $(".main-section").hide();
-            $(".login-section").show();
-        };
-        if (authToken) {
-
-            addPage();
-//            console.log(pickedVideo);
-
-            const embeddedVideo = `
-            <div class="row embeddedVideo">
-                <div class="col-6">
-                    <div class="add-video">
-                        <iframe class="ytplayer" type="text/html"
-                        src="https://www.youtube.com/embed/${pickedVideo.id.videoId}"
-                        frameborder="0" allowfullscreen>
-                        </iframe>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class=" add-joutnal">
-                        <textarea rows="4" cols="50" class="journal-textarea"></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="col-12 add-button">
-                    <button class="button save-button">save</button>
-                    </div>
-                </div>
-            </div>
-            `
-
-
-            $(".add-results").html(embeddedVideo);
-
-            $('html, body').animate({
-                scrollTop: $('html, body').offset().top
-            }, 1000);
-
-            //    ----------------------- Add Video ---------------------------
-
-
-            $(".save-button").click(function (event) {
-                event.preventDefault();
-
-
-                let mylist = {
-                    videoTitle: pickedVideo.snippet.title,
-                    journal: $(".journal-textarea").val(),
-                    video_url: pickedVideo.id.videoId
-                };
-
-                $.ajax({
-                    url: `/api/mylist/add-video`,
-                    data: JSON.stringify(mylist),
-                    error: function (error) {
-                        console.log("error", error);
-                    },
-                    success: function (data) {
-                        mylistPage();
-                        $('html, body').animate({
-                            scrollTop: $('html, body').offset().top
-                        }, 1000);
-                        //                        console.log(data);
-
-                    },
-                    headers: {
-                        "Authorization": "Bearer " + localStorage.getItem("token")
-                    },
-                    type: "POST",
-                    contentType: "application/json",
-                    dataType: "json"
-                });
-            });
-        }
-    });
-
-
-
-
-
-
-    //    ==================  Login Section===================
-
-    let loginUserName;
-
-    $("#login-form").submit(function (event) {
+     $("#login-form").submit(function (event) {
         event.preventDefault();
 
         let logUser = {
@@ -247,116 +21,35 @@ $(function () {
                 console.log("error", error);
             },
             success: function (data) {
-
-
                 localStorage.setItem("token", data.authToken);
-
-                console.log(data.authToken);
-
-                let addedVideo;
-                if (pickedVideo) {
-                    addedVideo = JSON.parse(localStorage.getItem('storedVideo'));
-                    //                     console.log(addedVideo);
-                };
-
-
-                if (addedVideo) {
-
-                    addPage();
-
-                    const embeddedVideo = `
-                        <div class="row embeddedVideo">
-                            <div class="col-6">
-                                <div class="add-video">
-                                    <iframe class="ytplayer" type="text/html"
-                                    src="https://www.youtube.com/embed/${addedVideo.id.videoId}"
-                                    frameborder="0" allowfullscreen>
-                                    </iframe>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class=" add-joutnal">
-                                    <textarea rows="4" cols="50" class="journal-textarea"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="col-12 add-button">
-                                    <button class="button save-button">save</button>
-                                </div>
-                            </div>
-                        </div>
-                        `
-
-
-                    $(".add-results").html(embeddedVideo);
-                    //                    console.log(JSON.parse(addedVideo));
-
-                    var video = $("#ytplayer").attr("src");
-                    $("#ytplayer").attr("src", "");
-                    $("#ytplayer").attr("src", video);$('html').scrollTop(0);
-
-
-                    //    ----------------------- Add Video ---------------------------
-
-
-                    $(".save-button").click(function (event) {
-                        event.preventDefault();
-
-
-                        let mylist = {
-                            videoTitle: pickedVideo.snippet.title,
-                            journal: $(".journal-textarea").val(),
-                            video_url: pickedVideo.id.videoId
-                        };
-
-                        $.ajax({
-                            url: `/api/mylist/add-video`,
-                            data: JSON.stringify(mylist),
-                            error: function (error) {
-                                console.log("error", error);
-                            },
-                            success: function (data) {
-                                mylistPage();
-                                $('html, body').animate({
-                                    scrollTop: $('html, body').offset().top
-                                }, 1000);
-                                //                                console.log(data);
-
-                            },
-                            headers: {
-                                "Authorization": "Bearer " + localStorage.getItem("token")
-                            },
-                            type: "POST",
-                            contentType: "application/json",
-                            dataType: "json"
-                        });
-                    });
-                }
-                if (!addedVideo) {
-
-                    mylistPage();
-                    $('html, body').animate({
-                        scrollTop: $('html, body').offset().top
-                    }, 1000);
-                }
-                //
-            },
-            // headers: {
-            //   'Authorization': 'Bearer ' + authToken
-            // },
-            type: "POST",
-            contentType: "application/json",
-            dataType: "json"
+                $(".search-section").show();
+                $(".nav-section").show();
+                $(".login-section").hide();
+                },
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: "json",
         });
+
     });
 
 
+//=========================== Login Button ==============================
 
-    //=================== Sign Up Section =======================
+    $(".change-to-log-in-button").click(e => {
+
+        $(".login-section").show();
+        $(".signup-section").hide();
+    })
 
 
+
+
+
+
+
+
+//====================================  Sign Up  ===============================
 
     $(".signup-form").submit(function (event) {
         event.preventDefault();
@@ -382,7 +75,6 @@ $(function () {
             },
             success: function (data) {
 
-
                 $.ajax({
                     url: `/api/auth/login`,
                     data: JSON.stringify(loginUser),
@@ -391,24 +83,18 @@ $(function () {
                     },
                     success: function (data) {
 
-                        //                        console.log("logged in!");
+                        $(".search-section").show();
+                        $(".nav-section").show();
+                        $(".signup-section").hide();
 
                         loginUserName = loginUser.email;
                         localStorage.setItem("token", data.authToken);
-                        searchVideoPage();
-                        $('html').scrollTop(0);
                     },
-                    // headers: {
-                    //   'Authorization': 'Bearer ' + authToken
-                    // },
                     type: "POST",
                     contentType: "application/json",
                     dataType: "json"
                 });
             },
-            // headers: {
-            //   'Authorization': 'Bearer ' + authToken
-            // },
             type: 'POST',
             contentType: 'application/json',
             dataType: "json",
@@ -419,311 +105,480 @@ $(function () {
 
 
 
+//============================ Sign UP Button =====================================
+
+    $(".sign-up-button").click(e => {
+
+        e.preventDefault();
+
+        $(".login-section").hide();
+        $(".signup-section").show();
+    })
 
 
 
-    //=====================  Log Out Section ====================
+
+
+
+
+//    ==================================== Log out =========================
+
+
+
 
     const logOut = function () {
 
-        location.reload();
+//        location.reload();
 
         localStorage.setItem("token", "");
-        localStorage.setItem('storedVideo', "");
-        //        searchVideoPage();
-        //        const authToken = localStorage.getItem("token");
-        //        console.log(authToken);
 
-        $(".main-section").show();
-        $(".logged").hide();
-        $(".youtube-search-result").hide();
-        $(".unlogged").show();
-        $(".signup-section").hide();
-        $(".login-section").hide();
-        $(".add-section").hide();
-        $(".mylist-section").hide();
-        $('html').scrollTop(0);
+        venueName = '';
+        phoneNumber = '';
+        category = '';
+        description = '';
+        website = '';
+        address1 = '';
+        address2 = '';
+        photo1 = '';
+        photo2 = '';
 
     };
 
 
-    $("#nav-logout-button1").click(function (event) {
-        //        event.preventDefault();
+    $("#nav-logout-button").click(function (event) {
+        event.preventDefault();
+
         logOut();
-    });
-    $("#nav-logout-button2").click(function (event) {
-        //        event.preventDefault();
-        logOut();
-    });
-    $("#nav-logout-button3").click(function (event) {
-        //        event.preventDefault();
-        logOut();
-    });
 
-
-    $("#nav-logout-icon1").click(function (event) {
-        //        event.preventDefault();
-        logOut();
-    });
-    $("#nav-logout-icon2").click(function (event) {
-        //        event.preventDefault();
-        logOut();
-    });
-    $("#nav-logout-icon3").click(function (event) {
-        //        event.preventDefault();
-        logOut();
-    });
-
-
-
-
-    //    ===================== Nav Buttons jQuery=============
-
-
-    //    ------------- Search Video ---------
-
-
-    const searchVideoPage = function () {
-
-        //stop video when it's hidden
-        var video = $(".ytplayer").attr("src");
-        $(".ytplayer").attr("src", "");
-        $(".ytplayer").attr("src", video);
-
-        const addedVideo = localStorage.getItem('storedVideo');
-
-        const authToken = localStorage.getItem("token");
-
-        if (authToken) {
-
-            $(".main-section").show();
-            $(".about-this-app").show();
-            $(".youtube-search-result").hide();
-            $(".unlogged").hide();
-            $(".logged").show();
-            $(".signup-section").hide();
-            $(".login-section").hide();
-            $(".add-section").hide();
-            $(".mylist-section").hide();
-        };
-        if (!authToken) {
-            //            console.log('unlogged');
-
-            $(".main-section").show();
-            $(".about-this-app").show();
-            $(".youtube-search-result").hide();
-            $(".logged").hide();
-            $(".unlogged").show();
-            $(".signup-section").hide();
-            $(".login-section").hide();
-            $(".add-section").hide();
-            $(".mylist-section").hide();
-        }
-        $('html, body').animate({
-            scrollTop: $('html, body').offset().top
-        }, 1000);
-    }
-
-    $("#nav-video-search-button0").click(function (e) {
-        e.preventDefault();
-
-        searchVideoPage();
-    });
-    $("#nav-video-search-button1").click(function (e) {
-        e.preventDefault();
-
-        searchVideoPage();
-    });
-    $("#nav-video-search-button2").click(function (e) {
-        e.preventDefault();
-
-        searchVideoPage();
-    });
-    $("#nav-video-search-button3").click(function (e) {
-        e.preventDefault();
-
-        searchVideoPage();
-    });
-    $("#nav-video-search-button4").click(function (e) {
-        e.preventDefault();
-
-        searchVideoPage();
-    });
-    $("#nav-video-search-button5").click(function (e) {
-        e.preventDefault();
-
-        searchVideoPage();
-    });
-
-
-
-    $("#nav-icon-search-button0").click(function (e) {
-        e.preventDefault();
-
-        searchVideoPage();
-    });
-    $("#nav-icon-search-button1").click(function (e) {
-        e.preventDefault();
-
-        searchVideoPage();
-    });
-    $("#nav-icon-search-button2").click(function (e) {
-        e.preventDefault();
-
-        searchVideoPage();
-    });
-    $("#nav-icon-search-button3").click(function (e) {
-        e.preventDefault();
-
-        searchVideoPage();
-    });
-    $("#nav-icon-search-button4").click(function (e) {
-        e.preventDefault();
-
-        searchVideoPage();
-    });
-    $("#nav-icon-search-button5").click(function (e) {
-        e.preventDefault();
-
-        searchVideoPage();
-    });
-
-
-
-    //-------------------  Sign Up --------------------
-
-    const signUpPage = function (e) {
-        e.preventDefault();
-
-        $(".main-section").hide();
-        $(".signup-section").show();
-        $(".login-section").hide();
-        $(".add-section").hide();
-        $(".mylist-section").hide();
-
-        $('html, body').animate({
-            scrollTop: $('html, body').offset().top
-        }, 1000);
-    }
-
-
-    $("#nav-signup-button ").click(e => {
-        signUpPage(e);
-    })
-
-    $("#nav-signup-button2 ").click(e => {
-        signUpPage(e);
-    })
-
-
-    //    ----------------------- Login ----------------
-
-
-    const loginPage = function (e) {
-        e.preventDefault();
-
-        $(".main-section").hide();
-        $(".signup-section").hide();
         $(".login-section").show();
-        $(".add-section").hide();
+        $(".signup-section").hide();
+        $(".search-section").hide();
+        $(".result-section").hide();
+        $(".more-info-section").hide();
         $(".mylist-section").hide();
-
-        $('html, body').animate({
-            scrollTop: $('html, body').offset().top
-        }, 1000);
-    }
-
-    $("#nav-login-button").click(e => {
-        loginPage(e);
+        $(".nav-section").hide();
     });
 
-    $("#nav-login-button2").click(e => {
-        loginPage(e);
+
+
+
+
+
+
+
+
+
+
+//    ===================== Foursquare API ============================
+
+
+    $(".search-form").submit(event => {
+
+        event.preventDefault();
+        event.stopPropagation();
+        //        $('html').animate({
+        //            scrollTop: 1250
+        //        }, 'fast');
+
+
+
+
+
+        const queryTarget = $(event.currentTarget).find("#search-input");
+        query = queryTarget.val();
+
+        queryTarget.val("");
+
+        getResults(query);
+
     });
 
-    //    -------------------------- Edit ---------------------
+
+    function getResults(userInput) {
 
 
-    const addedVideo = localStorage.getItem('storedVideo');
+
+        const renderResults = function(inputResults, index) {
+
+                const venueName = inputResults.venue.name;
+                const category = inputResults.venue.categories[0].name;
+                const address1 = inputResults.venue.location.formattedAddress[0];
+                const address2 = inputResults.venue.location.formattedAddress[1];
+                const address = `${address1}, ${address2}`;
+                const venueId = inputResults.venue.id;
+
+                return  `
+                    <li class="col-6">
+                        <div class="inner-search-result" >
+                            <p class="result-venue-name">${venueName}</p>
+                            <p class="result-category">${category}</p>
+                            <p class="result-address"> ${address} </p>
+                            <iframe width="600" height="400" id="result_gmap_canvas" src="https://maps.google.com/maps?q=${address}&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><br/>
+                            <button type="submit" class="button detailButton" data-index=${venueId}>more info</button>
+                        </div>
+                    </li>`
+        };
+
+        $.ajax({
+            url: "/api/search",
+            data: {
+                q: userInput
+            },
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                if(data.response.groups !== undefined){
+                    const results = data.response.groups[0].items;
+                    const displayResult = results.map((item, index) => {
+                        return renderResults(item, index);
+                    });
+                    $(".result-section").show();
+                    $(".foursquare-search-result ul").html(displayResult);
+
+                    $('html, body').animate({
+                        scrollTop: $('.foursquare-search-result').offset().top
+                    }, 1000);
+
+                } else if(data.response.groups === undefined){
+                    const noResultText = `
+							<li>
+							<p class="sorry-message">Sorry, There is no result. Search again, please.</p>
+							</li>`;
+                    $(".result-section").show();
+                    $(".foursquare-search-result ul").html(noResultText);
+                    $('html, body').animate({
+                        scrollTop: $('.foursquare-search-result').offset().top
+                    }, 1000);
+                }
+
+            },
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            }
+        });
+    };
 
 
-    const addPage = function () {
-        $(".main-section").hide();
-        $(".signup-section").hide();
-        $(".login-section").hide();
-        $(".add-section").show();
+
+//================================= Search button ===============================
+
+    $("#nav-search-button").click(e => {
+
+        e.preventDefault();
+
+        $(".search-section").show();
+        $(".result-section").hide();
+        $(".more-info-section").hide();
         $(".mylist-section").hide();
-
-        $('html, body').animate({
-            scrollTop: $('html, body').offset().top
-        }, 1000);
-    }
+    })
 
 
 
-    //----------------------- My List ---------------------------------------------------
-    let mylistData = [];
-
-    const mylistPage = function () {
-
-        var video = $(".ytplayer").attr("src");
-        $(".ytplayer").attr("src", "");
-        $(".ytplayer").attr("src", video);
-
-        $(".main-section").hide();
-        $(".signup-section").hide();
-        $(".login-section").hide();
-        $(".add-section").hide();
-        $(".mylist-section").show();
-
-        $('html, body').animate({
-            scrollTop: $('html, body').offset().top
-        }, 1000);
 
 
 
-        const renderResults = function (resultInput, index) {
+
+
+//    ===============================  More Info Button ============================
+
+
+    $(".foursquare-search-result ul").on("click", ".detailButton", function(e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        venueResultId = $(this).attr("data-index");
+
+
+        getVenueDetail(venueResultId);
+    });
+
+    let detailVenueName = '';
+    let detailPhoneNumber = '';
+    let detailCategory = '';
+    let detailDescription = '';
+    let detailWebsite = '';
+    let detailAddress = '';
+    let detailPhoto1 = '';
+    let detailPhoto2 = '';
+
+
+    function getVenueDetail(inputVenueId) {
+
+
+        function renderDetailResult(inputData) {
+
+
+//            console.log(inputData);
+            if(inputData.response.venue.contact.formattedPhone === undefined){
+                detailPhoneNumber = "Sorry.. No Phone number is available"
+            } else {
+                detailPhoneNumber = inputData.response.venue.contact.formattedPhone;
+            };
+
+            if(inputData.response.venue.description === undefined){
+                detailDescription = "Sorry.. No Description is available"
+            } else {
+                detailDescription = inputData.response.venue.description;
+            };
+
+            if(inputData.response.venue.url === undefined){
+                detailWebsite = "Sorry.. No Website is available"
+            } else {
+                detailWebsite = inputData.response.venue.url;
+            };
+
+            detailVenueName = inputData.response.venue.name;
+            detailCategory = inputData.response.venue.categories[0].name;
+            detailAddress1 = inputData.response.venue.location.formattedAddress[0];
+            detailAddress2 = inputData.response.venue.location.formattedAddress[1];
+            detailAddress = `${detailAddress1}, ${detailAddress2}`;
 
             return `
-            <li>
-                <div class="row mylistRow">
-                    <div class="col-6">
-                        <div class="individualResult">
-                        <iframe class="ytplayer" type="text/html"
-                        src="https://www.youtube.com/embed/${resultInput.video_url}"
-                        frameborder="0" allowfullscreen>
-                        </iframe>
-                        <p>${resultInput.videoTitle}</p>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="individualJournal">
-                            <div class="mylist-joutnal">
-                                <p>${resultInput.creationDate}</p>
-                                <p>${resultInput.journal}</p>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="col-12 mylist-buttons">
-                        <button class="button edit-button" video-index="${index}">edit</button>
-                        <button class="button delete-button" video-index="${index}">delete</button>
+                <div class="col-6">
+                    <div class="detail-photo-map-section">
+                        <img src='${detailPhoto1}' height="400" width="400">
+                        <img src='${detailPhoto2}' height="400" width="400">
+                        <iframe width="600" height="400" id="gmap_canvas" src="https://maps.google.com/maps?q=${detailAddress}&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
                     </div>
                 </div>
-                <hr class="divideLine">
-            </li>
-                    `;
-
+                <div class="col-6">
+                    <div class="information-section">
+                        <p class='result-category'>category : <span class='what-place'>${detailCategory}</span></p>
+                        <p class='result-description'>description : ${detailDescription}</p>
+                        <p class='result-phone-number'>phone : ${detailPhoneNumber}</p>
+                        <p class='result-website'>website : ${detailWebsite}</p>
+                        <p class='result-address'>address : ${detailAddress}</p>
+                        <textarea rows="4" cols="50" class="note-textarea" placeholder="note.."></textarea>
+                    </div>
+                </div>
+                <div class="col-12 detail-buttons">
+                    <button class='button add-item-button'>add</button>
+                    <button class='button back-to-list-button'>back to list</button>
+                </div>
+                `
         };
 
 
+        function renderPhotos(inputData) {
+
+            if(inputData.response.photos.count === 0){
+
+                detailPhoto1 = "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
+                detailPhoto2 = "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
+                console.log(detailPhoto1)
+            }else if(inputData.response.photos.count === 1){
+                const photo1Prefix = inputData.response.photos.items[0].prefix;
+                const photo1Suffix = inputData.response.photos.items[0].suffix;
+                const photo1Height = inputData.response.photos.items[0].height;
+                const photo1Width = inputData.response.photos.items[0].width;
+                detailPhoto1 = `${photo1Prefix}${photo1Height}${photo1Width}${photo1Suffix}`;
+                detailPhoto2 = "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
+            }else {
+                const photo1Prefix = inputData.response.photos.items[0].prefix;
+                const photo1Suffix = inputData.response.photos.items[0].suffix;
+                const photo1Height = inputData.response.photos.items[0].height;
+                const photo1Width = inputData.response.photos.items[0].width;
+                detailPhoto1 = `${photo1Prefix}${photo1Height}${photo1Width}${photo1Suffix}`;
+
+                const photo2Prefix = inputData.response.photos.items[1].prefix;
+                const photo2Suffix = inputData.response.photos.items[1].suffix;
+                const photo2Height = inputData.response.photos.items[1].height;
+                const photo2Width = inputData.response.photos.items[1].width;
+                detailPhoto2 = `${photo2Prefix}${photo2Height}${photo2Width}${photo2Suffix}`;
+            }
+        }
+
+
+
+         $.ajax({
+            url: "/api/search-more",
+            data: {
+                venueId: inputVenueId
+            },
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+
+                const html = renderDetailResult(data);
+
+                const venueName = data.response.venue.name;
+
+                $(".login-section").hide();
+                $(".signup-section").hide();
+                $(".search-section").hide();
+                $(".result-section").hide();
+                $(".more-info-section").show();
+
+                $("#venue-name").text(venueName);
+                $("#detail-info-results").html(html);
+
+                $('html').animate({
+                    scrollTop: 10
+                        }, 'fast');
+            },
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            }
+        });
+
+        $.ajax({
+            url: "/api/search-photos",
+            data: {
+                venueId: inputVenueId
+            },
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+
+                renderPhotos(data);
+            },
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            }
+        })
+
+    };
+
+
+//=============================== Add Item Button ====================
+
+    $("#detail-info-results").on('click', '.add-item-button', e => {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const memo = $(".note-textarea").val();
+
+        const mylist = {
+            venueName: detailVenueName,
+            phoneNumber: detailPhoneNumber,
+            category: detailCategory,
+            description: detailDescription,
+            website: detailWebsite,
+            address: detailAddress,
+            photo1: detailPhoto1,
+            photo2: detailPhoto2,
+            memo
+        }
+
+        $.ajax({
+                url: `/api/mylist/add-item`,
+                data: JSON.stringify(mylist),
+                error: function (error) {
+                    console.log("error", error);
+                },
+                success: function (data) {
+
+//                  $('html, body').animate({
+//                      scrollTop: $('html, body').offset().top
+//                  }, 1000);
+//                    console.log(data);
+                    $(".login-section").hide();
+                    $(".signup-section").hide();
+                    $(".search-section").hide();
+                    $(".result-section").hide();
+                    $(".more-info-section").hide();
+                    $(".mylist-section").show();
+                    displayMylist();
+
+                },
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("token")
+                },
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json"
+                });
+    });
+
+
+
+
+
+
+
+
+//=================================== Back to List Button ==========================
+
+    $("#detail-info-results").on('click', '.back-to-list-button', e => {
+
+        e.preventDefault();
+
+
+        $(".search-section").show();
+        $(".result-section").show();
+        $(".more-info-section").hide();
+        $('html, body').animate({
+                        scrollTop: $('.foursquare-search-result').offset().top
+                    }, 1000);
+
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+//======================== Display My List =========================
+
+
+
+
+    let mylistData = [];
+
+    const displayMylist = function() {
+
+        const renderResults = function (resultInput, index) {
+            console.log(resultInput);
+
+            return `
+                <li>
+                    <hr class="divideLine">
+                    <div class="row displayMylist">
+                        <div class="col-12">
+                            <h2 id="mylist-venue-name">${resultInput.venueName}</h2>
+                        </div>
+                        <div class="col-6">
+                            <div class="detail-photo-map-section">
+                                <img src='${resultInput.photo1}' height="400" width="400">
+                                <img src='${resultInput.photo2}' height="400" width="400">
+                                <iframe width="600" height="400" id="gmap_canvas" src="https://maps.google.com/maps?q=${resultInput.address}&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="information-section">
+                                <p class='added-time'>${resultInput.creationDate}</p>
+                                <p class='result-category'>category : <span class='what-place'>${resultInput.category}</span></p>
+                                <p class='result-description'>description : ${resultInput.description}</p>
+                                <p class='result-phone-number'>phone : ${resultInput.phoneNumber}</p>
+                                <p class='result-website'>website : ${resultInput.website}</p>
+                                <p class='result-address'>address : ${resultInput.address}</p>
+                                <p class='result-memo'>note : <span class='memo-display'>${resultInput.memo}</span></p>
+                            </div>
+                        </div>
+                        <div class="col-12 mylist-buttons">
+                            <button class="button edit-button" listItem-index="${index}">edit note</button>
+                            <button class="button delete-button" item-index="${index}">delete</button>
+                        </div>
+                    </div>
+                </li>
+                `
+
+
+        };
 
         $.ajax({
             url: "/api/mylist/get-user-list",
             dataType: "json",
             type: "GET",
             success: function (data) {
-                //            console.log(data);
 
                 mylistData = data;
 
@@ -732,7 +587,9 @@ $(function () {
                 });
 
                 $(".mylist-results ul").html(displayResults);
-
+                $('html, body').animate({
+                        scrollTop: $('html, body').offset().top
+                    }, 300);
 
             },
             headers: {
@@ -746,114 +603,167 @@ $(function () {
 
 
 
-    //-------------------------------- Edit button ------------------------------------
-
-    $(".mylist-results ul").on("click", ".edit-button", function (event) {
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        var video = $(".ytplayer").attr("src");
-        $(".ytplayer").attr("src", "");
-        $(".ytplayer").attr("src", video);
 
 
-        let editJournal = mylistData[$(this).attr("video-index")];
-        //        console.log(editJournal);
 
 
-        addPage();
+//=================== Mylist Button ==========================================
 
+    $("#nav-mylist-button").click (e => {
 
-        const editVideo = `
-            <div class="row">
-            <div class="col-6">
-            <div class="add-video">
-            <iframe class="ytplayer" type="text/html"
-            src="https://www.youtube.com/embed/${editJournal.video_url}"
-            frameborder="0" allowfullscreen>
-            </iframe>
-            </div>
-            </div>
-            <div class="col-6">
-            <div class=" add-joutnal">
-            <textarea rows="4" cols="50" class="journal-textarea"></textarea>
-            </div>
-            </div>
-            </div>
-            <div class="row">
-            <div class="col-12">
-            <div class="col-12 add-button">
-            <button class="button edit-save-button">save</button>
-            </div>
-            </div>
-            </div>
-            `
+        e.preventDefault();
+        e.stopPropagation();
 
+        displayMylist();
 
-        $(".add-results").html(editVideo);
-        $(".journal-textarea").val(editJournal.journal);
+        $(".login-section").hide();
+        $(".signup-section").hide();
+        $(".search-section").hide();
+        $(".result-section").hide();
+        $(".more-info-section").hide();
+        $(".mylist-section").show();
+    })
 
 
 
 
 
-        $(".edit-save-button").click(function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            $('html').scrollTop(0);
 
+
+
+
+
+
+
+
+
+
+//===================== Edit Button ========================================
+
+
+
+    $(".mylist-results ul").on("click", ".edit-button", function(e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const editItem = mylistData[$(this).attr("listItem-index")];
+
+        const editItemDisplay =
+                    `<div class="row displayMylist">
+                        <div class="col-6">
+                            <div class="detail-photo-map-section">
+                                <img src='${editItem.photo1}' height="400" width="400">
+                                <img src='${editItem.photo2}' height="400" width="400">
+                                <iframe width="600" height="400" id="gmap_canvas" src="https://maps.google.com/maps?q=${editItem.address}&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="information-section">
+                                <p class='added-time'>${editItem.creationDate}</p>
+                                <p class='result-category'>category : <span class='what-place'>${editItem.category}</span></p>
+                                <p class='result-description'>description : ${editItem.description}</p>
+                                <p class='result-phone-number'>phone : ${editItem.phoneNumber}</p>
+                                <p class='result-website'>website : ${editItem.website}</p>
+                                <p class='result-address'>address : ${editItem.address}</p>
+                                <textarea rows="4" cols="50" class="note-textarea"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-12 mylist-buttons">
+                            <button class='button edit-save-button'>save</button>
+                        </div>
+                    </div>`
+
+
+        $(".login-section").hide();
+        $(".signup-section").hide();
+        $(".search-section").hide();
+        $(".result-section").hide();
+        $(".more-info-section").show();
+        $(".mylist-section").hide();
+
+        $("#venue-name").text(editItem.venueName);
+        $("#detail-info-results").html(editItemDisplay);
+        $(".note-textarea").val(editItem.memo);
+
+
+
+
+
+
+
+
+
+//============================= Edit Save Button ========================================
+
+
+        $(".edit-save-button").click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
 
             let editedMylist = {
-                journal: $(".journal-textarea").val(),
-                id: editJournal.id
-            };
+                    memo: $(".note-textarea").val(),
+                    id: editItem.id
+                };
 
-            //            console.log(editedMylist);
+                console.log(editedMylist);
 
-            $.ajax({
-                url: `/api/mylist/edit-journal/${editJournal.id}`,
-                data: JSON.stringify(editedMylist),
-                error: function (error) {
-                    console.log("error", error);
-                },
-                success: function (data) {
-                    //                    console.log("good");
-                    mylistPage();
+                $.ajax({
+                    url: `/api/mylist/edit-memo/${editItem.id}`,
+                    data: JSON.stringify(editedMylist),
+                    error: function (error) {
+                        console.log("error", error);
+                    },
+                    success: function (data) {
+//                        console.log(data);
+                        //                  $('html, body').animate({
+//                      scrollTop: $('html, body').offset().top
+    //                  }, 1000);
+                        $(".login-section").hide();
+                        $(".signup-section").hide();
+                        $(".search-section").hide();
+                        $(".result-section").hide();
+                        $(".more-info-section").hide();
+                        $(".mylist-section").show();
+                        displayMylist();
 
-                },
-                headers: {
-                    "Authorization": "Bearer " + localStorage.getItem("token")
-                },
-                type: "PUT",
-                contentType: "application/json",
-                dataType: "json"
-            });
-        });
+                        $('html, body').animate({
+                        scrollTop: $('html, body').offset().top
+                    }, 300);
+
+                    },
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("token")
+                    },
+                    type: "PUT",
+                    contentType: "application/json",
+                    dataType: "json"
+                });
+        })
     });
 
 
-    //----------------------------------Delete Button------------------------------------------
 
+
+
+//====================== Delete Button =====================================
 
     $(".mylist-results ul").on("click", ".delete-button", function (event) {
 
         event.stopPropagation();
         event.preventDefault();
 
-
-
-        let editJournal = mylistData[$(this).attr("video-index")];
-        //        console.log(editJournal.id);
+        const deleteItem = mylistData[$(this).attr("item-index")];
+        console.log(deleteItem.id);
 
         $.ajax({
-            url: `/api/mylist/${editJournal.id}`,
+            url: `/api/mylist/${deleteItem.id}`,
             error: function (error) {
                 console.log("error", error);
             },
             success: function (data) {
-                //                console.log("good");
-                mylistPage();
+
+                displayMylist();
 
             },
             headers: {
@@ -868,60 +778,18 @@ $(function () {
 
 
 
+//=================== Search Nav Button =======================
 
-    //    ---------------------------- My list Button -----------------------------------
+    $(".nav-search-button").click(e => {
 
-
-    $("#nav-mylist-button1").click(e => {
-        e.preventDefault();
-        $('html').scrollTop(0);
-
-        mylistPage(e);
-    });
-    $("#nav-mylist-button2").click(e => {
-        e.preventDefault();
-        $('html').scrollTop(0);
-
-        mylistPage(e);
-    });
-    $("#nav-mylist-button3").click(e => {
-        e.preventDefault();
-        $('html').scrollTop(0);
-
-        mylistPage(e);
-    });
+        $(".login-section").hide();
+        $(".signup-section").hide();
+        $(".search-section").show();
+        $(".result-section").hide();
+        $(".more-info-section").hide();
+        $(".mylist-section").hide();
+    })
 
 
+});
 
-    /****************POPUP ANIMATE*******************/
-
-
-    $('.popup-youtube, .popup-vimeo, .popup-gmaps').magnificPopup({
-        disableOn: 700,
-        type: 'iframe',
-        mainClass: 'mfp-fade',
-        removalDelay: 160,
-        preloader: false,
-
-        fixedContentPos: false
-    });
-
-
-    $('.popup-gallery').magnificPopup({
-        delegate: 'a',
-        type: 'image',
-        tLoading: 'Loading image #%curr%...',
-        mainClass: 'mfp-img-mobile',
-        gallery: {
-            enabled: true,
-            navigateByImgClick: true,
-            preload: [0, 1] // Will preload 0 - before current, and 1 after the current image
-        },
-        image: {
-            tError: '<a href="%url%">The image #%curr%</a> could not be loaded.',
-            titleSrc: function (item) {
-                return item.el.attr('title') + '<small>by Marsel Van Oosten</small>';
-            }
-        }
-    });
-})

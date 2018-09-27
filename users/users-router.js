@@ -2,9 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const {
-    User
-} = require('./users-models');
+const {User} = require('./users-models');
 
 const router = express.Router();
 
@@ -12,6 +10,7 @@ const jsonParser = bodyParser.json();
 
 // Post to register a new user
 router.post('/', jsonParser, (req, res) => {
+    console.log("got it");
     const requiredFields = ['email', 'password'];
     const missingField = requiredFields.find(field => !(field in req.body));
 
@@ -85,66 +84,57 @@ router.post('/', jsonParser, (req, res) => {
         return res.status(422).json({
             code: 422,
             reason: 'ValidationError',
-            message: tooSmallField ?
-                `Must be at least ${sizedFields[tooSmallField]
-            .min} characters long` : `Must be at most ${sizedFields[tooLargeField]
+            message: tooSmallField
+            ? `Must be at least ${sizedFields[tooSmallField]
+            .min} characters long`
+            : `Must be at most ${sizedFields[tooLargeField]
             .max} characters long`,
             location: tooSmallField || tooLargeField
         });
     }
 
-    let {
-        email,
-        password,
-        name = ''
-    } = req.body;
+    let {email, password, name = ''} = req.body;
     // email and password come in pre-trimmed, otherwise we throw an error
     // before this
     name = name.trim();
 
-    return User.find({
-            email
-        })
+    return User.find({email})
         .count()
         .then(count => {
-            if (count > 0) {
-                // There is an existing user with the same username
-                return Promise.reject({
-                    code: 422,
-                    reason: 'ValidationError',
-                    message: 'email already taken',
-                    location: 'email'
-                });
-            }
-            // If there is no existing user, hash the password
-            return User.hashPassword(password);
-        })
+        if (count > 0) {
+            // There is an existing user with the same username
+            return Promise.reject({
+                code: 422,
+                reason: 'ValidationError',
+                message: 'email already taken',
+                location: 'email'
+            });
+        }
+        // If there is no existing user, hash the password
+        return User.hashPassword(password);
+    })
         .then(hash => {
-            console.log(hash);
-            return User.create({
-                email,
-                password: hash,
-                name
-            });
-        })
-        .then(user => {
-            return res.status(201).json(user.serialize());
-        })
-        .catch(err => {
-            // Forward validation errors on to the client, otherwise give a 500
-            // error because something unexpected has happened
-            if (err.reason === 'ValidationError') {
-                return res.status(err.code).json(err);
-            }
-            res.status(500).json({
-                code: 500,
-                message: 'Internal server error'
-            });
+        console.log(hash);
+        return User.create({
+            email,
+            password: hash,
+            name
         });
+    })
+        .then(user => {
+        console.log(user)
+        return res.status(201).json(user.serialize());
+    })
+        .catch(err => {
+        // Forward validation errors on to the client, otherwise give a 500
+        // error because something unexpected has happened
+        if (err.reason === 'ValidationError') {
+            return res.status(err.code).json(err);
+        }
+        res.status(500).json({code: 500, message: 'Internal server error'});
+    });
 });
 
 
 
-module.exports = {
-    router
-};
+module.exports = {router};
