@@ -62,7 +62,7 @@ app.get('/api/search', jwtAuth, (req, res) => {
 
     foursquare.venues.explore({
         near: input,
-        limit: 4
+        limit: 10
     }, function (err, data) {
         if (err) {
             console.error('Error: ' + err);
