@@ -553,7 +553,7 @@ $(function() {
                         <div class="col-12">
                             <h2 id="mylist-venue-name">${resultInput.venueName}</h2>
                         </div>
-                        <div class="col-6">
+                        <div class="col-6 outer-detail-photo-map-section">
                             <div class="detail-photo-map-section">
                                 <img src='${resultInput.photo1}' height="400" width="400">
                                 <img src='${resultInput.photo2}' height="400" width="400">

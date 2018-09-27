@@ -193,7 +193,7 @@ input:-webkit-autofill {
 
 .signup-form {
     position: absolute;
-    top: 43.15%;
+    top: 45.66%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 400px;
@@ -306,7 +306,7 @@ footer {
     background-color: #585858;
     height: 140px;
     color: #ebebeb;
-    font-size: 11px;
+    font-size: 14px;
     padding-top: 40px;
     text-align: center;
 }
@@ -373,7 +373,7 @@ footer ion-icon {
 
 #search-results li {
     list-style: none;
-	padding: 0 30px;
+    padding: 0 30px;
 }
 
 #search-results ul {
@@ -417,13 +417,13 @@ footer ion-icon {
 
 
 .result-address {
-	font-size: 15px;
+    font-size: 15px;
     height: 40px;
 }
 
 .sorry-message {
     font-size: 23px;
-	padding-top: 100px;
+    padding-top: 100px;
     height: 85vh;
 }
 
@@ -433,8 +433,8 @@ footer ion-icon {
 /*======================== Detail Add & Edit Section ===============================*/
 
 .more-info-section {
-	padding: 0 100px;
-	min-height: 100vh;
+    padding: 0 100px;
+    min-height: 100vh;
 }
 
 .detail-info {
@@ -495,6 +495,7 @@ footer ion-icon {
 }
 
 .detail-buttons {
+    margin-top: 30px;
     margin-bottom: 100px;
 }
 
@@ -532,8 +533,8 @@ footer ion-icon {
 /*---------------------------My List----------------------------*/
 
 .mylist-section {
-	padding: 0 100px;
-	min-height: 100vh;
+    padding: 0 100px;
+    min-height: 100vh;
 }
 
 .mylist-title {
@@ -577,7 +578,7 @@ footer ion-icon {
 .divideLine {
     margin-top: 40px;
     margin-bottom: 40px;
-    width: 600px;
+    width: 480px;
     border-top: 2px solid #8e8e8e;
     display: inline-block;
 }
@@ -594,6 +595,13 @@ footer ion-icon {
     margin-bottom: 40px;
 }
 
+.outer-detail-photo-map-section {
+    text-align: right;
+}
+.detail-photo-map-section {
+    max-width:600px;
+    margin: 0 auto;
+}
 
 
 
@@ -604,7 +612,7 @@ footer ion-icon {
 /*=========================Media Query==========================*/
 
 @media only screen and (max-width: 950px) {
-    
+
     ion-icon {
         display: inline-block;
         vertical-align: middle;
@@ -615,21 +623,21 @@ footer ion-icon {
     display: inline-block;
 }
     */
-	.inner-search-result{
-		max-width: 650px;
-	}
-	
-    .detail-info {
-     	height: 100%;
+    .inner-search-result{
+        max-width: 650px;
     }
 
     .detail-info {
-     	margin-bottom: 0;
+         height: 100%;
+    }
+
+    .detail-info {
+         margin-bottom: 0;
     }
 
     .mylist-buttons {
-     	margin-bottom: 0;
-	}
+         margin-bottom: 0;
+    }
 
     .search-form {
         min-width: 0;
@@ -651,11 +659,11 @@ footer ion-icon {
     #nav-logout-button3 {
         display: none;
     }
-	
+
 /*
-	#result_gmap_canvas {
-		max-width: 400px;
-	}
+    #result_gmap_canvas {
+        max-width: 400px;
+    }
 */
 
 
@@ -671,10 +679,10 @@ footer ion-icon {
     }
 
     .row {
-		padding-left: 25px;
-		padding-right: 25px;
-		margin: 0 auto;
-		max-width: 1500px;
+        padding-left: 25px;
+        padding-right: 25px;
+        margin: 0 auto;
+        max-width: 1500px;
     }
 
     .foursquare-search-result h2 {
@@ -739,15 +747,15 @@ footer ion-icon {
         min-width: 0;
         width: 100%;
     }
-	
-	.inner-search-result{
-		margin: 25px auto;
-	}
-	
-	.more-info-section,
-	.mylist-section {
-     	padding: 0; 
-	}
+
+    .inner-search-result{
+        margin: 25px auto;
+    }
+
+    .more-info-section,
+    .mylist-section {
+         padding: 0;
+    }
 
 }
 
@@ -758,10 +766,10 @@ footer ion-icon {
         padding-left: 10px;
         padding-right: 10px;
     }
-	
-	#search-results li {
-		padding: 0;
-	}
+
+    #search-results li {
+        padding: 0;
+    }
 
     #venue-name {
         font-size: 30px;
