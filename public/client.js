@@ -686,6 +686,9 @@ $(function() {
         $("#detail-info-results").html(editItemDisplay);
         $(".note-textarea").val(editItem.memo);
 
+		$('html, body').animate({
+                 scrollTop: $('html, body').offset().top
+                 }, 200);
 
 
 
