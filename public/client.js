@@ -241,9 +241,9 @@ $(function() {
 
                 } else if(data.response.groups === undefined){
                     const noResultText = `
-							<li>
-							<p class="sorry-message">Sorry, There is no result. Search again, please.</p>
-							</li>`;
+                            <li>
+                            <p class="sorry-message">Sorry, There is no result. Search again, please.</p>
+                            </li>`;
                     $(".result-section").show();
                     $(".foursquare-search-result ul").html(noResultText);
                     $('html, body').animate({
@@ -413,9 +413,9 @@ $(function() {
                 $("#venue-name").text(venueName);
                 $("#detail-info-results").html(html);
 
-                $('html').animate({
-                    scrollTop: 10
-                        }, 'fast');
+                $('html, body').animate({
+                      scrollTop: $('html, body').offset().top
+                  }, 200);
             },
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
@@ -686,11 +686,11 @@ $(function() {
         $("#detail-info-results").html(editItemDisplay);
         $(".note-textarea").val(editItem.memo);
 
-		$('html, body').animate({
+        $('html, body').animate({
                  scrollTop: $('html, body').offset().top
                  }, 200);
 
-   
+
 
 
 
