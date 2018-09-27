@@ -1,6 +1,6 @@
-# Youtube Journal Node Capstone
+# Travelers fullstack Capstone
 
-Youtube Journal is a place where you can personalize YouTube and brainstorm your favorite topics by gathering your favorite videos and your thoughts related them in one space.
+Travelers is for travelers to search world wide venues and make own list.
 
 ## Screenshots
 
@@ -25,7 +25,7 @@ This app is for this type of users:
 ### Wireframes
 Main Page             |  Mylist Page
 :-------------------------:|:-------------------------:
-![Main Page](https://github.com/realnuno/youtube-journal-node-capstone/blob/master/readme-imgs/image1.jpeg)  |  ![Mylist Page](https://github.com/realnuno/youtube-journal-node-capstone/blob/master/readme-imgs/image2.jpeg)
+![Main Page](https://github.com/realnuno/travelers-fullstack-capstone/blob/master/readme-imgs/Image1.jpeg)  |  ![Mylist Page](https://github.com/realnuno/travelers-fullstack-capstone/blob/master/readme-imgs/Image2.jpeg)
 
 ## Working Prototype
 You can access a working prototype of the app here: https://travelers-fullstack-capstone.herokuapp.com/
